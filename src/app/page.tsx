@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { TechMarquee } from "@/components/sections/TechMarquee";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { ProjectsSection } from "@/components/sections/projects/ProjectsSection";
+import type { Metadata } from "next";
 import type {
   Award,
   Certification,
@@ -32,6 +33,34 @@ const emptyPortfolioData: PortfolioData = {
   awards: [],
   techMarquee: [],
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return {
+      title: "Portfolio",
+      description: "Full-stack developer portfolio",
+    };
+  }
+
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from("profile")
+    .select("full_name_en, tagline_en, avatar_url")
+    .maybeSingle();
+
+  const title = profile?.full_name_en ? `${profile.full_name_en} | Portfolio` : "Portfolio";
+  const description = profile?.tagline_en || "Full-stack developer portfolio";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: profile?.full_name_en || "Portfolio",
+      description,
+      images: profile?.avatar_url ? [{ url: profile.avatar_url }] : [],
+    },
+  };
+}
 
 async function getPortfolioData(): Promise<PortfolioData> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
