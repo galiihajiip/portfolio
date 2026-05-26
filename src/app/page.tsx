@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TechMarquee } from "@/components/sections/TechMarquee";
+import { ContactSection } from "@/components/sections/ContactSection";
 import { ProjectsSection } from "@/components/sections/projects/ProjectsSection";
 import type {
   Award,
@@ -156,22 +157,7 @@ export default async function HomePage() {
             </div>
           </section>
 
-          <section id="contact" className="py-24">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-accent">
-              Get in Touch
-            </p>
-            <h2 className="font-display text-display-md text-text-primary">
-              Let&apos;s build something great
-            </h2>
-            {profile?.email && (
-              <a
-                href={`mailto:${profile.email}`}
-                className="mt-6 inline-flex rounded-lg bg-accent px-5 py-3 text-sm font-medium text-accent-foreground hover:bg-accent/90"
-              >
-                {profile.email}
-              </a>
-            )}
-          </section>
+          <ContactSection />
         </div>
       </main>
       <footer className="border-t border-border py-8">

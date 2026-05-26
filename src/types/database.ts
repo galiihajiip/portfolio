@@ -1,44 +1,60 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+type SupabaseRecord<T> = T & Record<string, unknown>;
 
 export interface Database {
   public: {
     Tables: {
       profile: {
-        Row: Profile;
-        Insert: Omit<Profile, "id" | "updated_at"> & { id?: string; updated_at?: string };
-        Update: Partial<Omit<Profile, "id">>;
+        Row: SupabaseRecord<Profile>;
+        Insert: SupabaseRecord<
+          Omit<Profile, "id" | "updated_at"> & { id?: string; updated_at?: string }
+        >;
+        Update: Partial<SupabaseRecord<Omit<Profile, "id">>>;
+        Relationships: [];
       };
       projects: {
-        Row: Project;
-        Insert: Omit<Project, "id" | "created_at" | "updated_at"> & { id?: string };
-        Update: Partial<Omit<Project, "id" | "created_at">>;
+        Row: SupabaseRecord<Project>;
+        Insert: SupabaseRecord<Omit<Project, "id" | "created_at" | "updated_at"> & { id?: string }>;
+        Update: Partial<SupabaseRecord<Omit<Project, "id" | "created_at">>>;
+        Relationships: [];
       };
       experience: {
-        Row: Experience;
-        Insert: Omit<Experience, "id" | "created_at"> & { id?: string };
-        Update: Partial<Omit<Experience, "id" | "created_at">>;
+        Row: SupabaseRecord<Experience>;
+        Insert: SupabaseRecord<Omit<Experience, "id" | "created_at"> & { id?: string }>;
+        Update: Partial<SupabaseRecord<Omit<Experience, "id" | "created_at">>>;
+        Relationships: [];
       };
       certifications: {
-        Row: Certification;
-        Insert: Omit<Certification, "id" | "created_at"> & { id?: string };
-        Update: Partial<Omit<Certification, "id" | "created_at">>;
+        Row: SupabaseRecord<Certification>;
+        Insert: SupabaseRecord<Omit<Certification, "id" | "created_at"> & { id?: string }>;
+        Update: Partial<SupabaseRecord<Omit<Certification, "id" | "created_at">>>;
+        Relationships: [];
       };
       awards: {
-        Row: Award;
-        Insert: Omit<Award, "id" | "created_at"> & { id?: string };
-        Update: Partial<Omit<Award, "id" | "created_at">>;
+        Row: SupabaseRecord<Award>;
+        Insert: SupabaseRecord<Omit<Award, "id" | "created_at"> & { id?: string }>;
+        Update: Partial<SupabaseRecord<Omit<Award, "id" | "created_at">>>;
+        Relationships: [];
       };
       tech_marquee: {
-        Row: TechMarqueeItem;
-        Insert: Omit<TechMarqueeItem, "id"> & { id?: string };
-        Update: Partial<Omit<TechMarqueeItem, "id">>;
+        Row: SupabaseRecord<TechMarqueeItem>;
+        Insert: SupabaseRecord<Omit<TechMarqueeItem, "id"> & { id?: string }>;
+        Update: Partial<SupabaseRecord<Omit<TechMarqueeItem, "id">>>;
+        Relationships: [];
       };
       contact_messages: {
-        Row: ContactMessage;
-        Insert: Omit<ContactMessage, "id" | "created_at" | "is_read"> & { id?: string };
-        Update: Partial<Omit<ContactMessage, "id" | "created_at">>;
+        Row: SupabaseRecord<ContactMessage>;
+        Insert: SupabaseRecord<
+          Omit<ContactMessage, "id" | "created_at" | "is_read"> & { id?: string }
+        >;
+        Update: Partial<SupabaseRecord<Omit<ContactMessage, "id" | "created_at">>>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
 
