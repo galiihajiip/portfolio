@@ -14,15 +14,17 @@ export interface Column<T> {
 interface DataTableProps<T extends { id: string }> {
   data: T[];
   columns: Column<T>[];
-  onAdd: () => void;
-  onEdit: (row: T) => void;
-  onDelete: (id: string) => Promise<void>;
+  actions?: (row: T) => ReactNode;
+  onAdd?: () => void;
+  onEdit?: (row: T) => void;
+  onDelete?: (id: string) => Promise<void>;
   title: string;
 }
 
 export function DataTable<T extends { id: string }>({
   data,
   columns,
+  actions,
   onAdd,
   onEdit,
   onDelete,
@@ -32,7 +34,7 @@ export function DataTable<T extends { id: string }>({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
-    if (!deleteId) {
+    if (!deleteId || !onDelete) {
       return;
     }
 
@@ -46,14 +48,16 @@ export function DataTable<T extends { id: string }>({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl text-text-primary">{title}</h2>
-        <button
-          type="button"
-          onClick={onAdd}
-          className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
-        >
-          <Plus size={15} />
-          Add New
-        </button>
+        {onAdd && (
+          <button
+            type="button"
+            onClick={onAdd}
+            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
+          >
+            <Plus size={15} />
+            Add New
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-surface-elevated">
@@ -69,17 +73,17 @@ export function DataTable<T extends { id: string }>({
                     {col.header}
                   </th>
                 ))}
-                <th className="w-24 px-4 py-3" />
+                {(actions || onEdit || onDelete) && <th className="w-24 px-4 py-3" />}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {data.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={columns.length + 1}
+                    colSpan={columns.length + (actions || onEdit || onDelete ? 1 : 0)}
                     className="px-4 py-12 text-center text-sm text-text-muted"
                   >
-                    No entries yet. Click &quot;Add New&quot; to get started.
+                    No entries yet{onAdd ? '. Click "Add New" to get started.' : "."}
                   </td>
                 </tr>
               ) : (
@@ -92,26 +96,33 @@ export function DataTable<T extends { id: string }>({
                           : String((row as Record<string, unknown>)[String(col.key)] ?? "")}
                       </td>
                     ))}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          type="button"
-                          onClick={() => onEdit(row)}
-                          className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-surface-subtle hover:text-text-primary"
-                          aria-label="Edit entry"
-                        >
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDeleteId(row.id)}
-                          className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-red-500/10 hover:text-red-500"
-                          aria-label="Delete entry"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
+                    {(actions || onEdit || onDelete) && (
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          {actions?.(row)}
+                          {onEdit && (
+                            <button
+                              type="button"
+                              onClick={() => onEdit(row)}
+                              className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-surface-subtle hover:text-text-primary"
+                              aria-label="Edit entry"
+                            >
+                              <Pencil size={14} />
+                            </button>
+                          )}
+                          {onDelete && (
+                            <button
+                              type="button"
+                              onClick={() => setDeleteId(row.id)}
+                              className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-red-500/10 hover:text-red-500"
+                              aria-label="Delete entry"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -120,7 +131,7 @@ export function DataTable<T extends { id: string }>({
         </div>
       </div>
 
-      <Dialog.Root open={Boolean(deleteId)} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <Dialog.Root open={Boolean(deleteId && onDelete)} onOpenChange={(open) => !open && setDeleteId(null)}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
           <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-surface-elevated p-6 shadow-2xl">
