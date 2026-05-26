@@ -190,9 +190,19 @@ export default async function HomePage() {
         </div>
       </main>
       <footer className="border-t border-border py-8">
-        <div className="mx-auto max-w-7xl px-4 text-sm text-text-muted sm:px-6 lg:px-8">
-          Copyright {new Date().getFullYear()} {profile?.full_name_en || "Portfolio"}. All
-          rights reserved.
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 text-sm text-text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <span>
+            Copyright {new Date().getFullYear()} {profile?.full_name_en || "Portfolio"}. All
+            rights reserved.
+          </span>
+          <a
+            href="/admin/login"
+            rel="nofollow noindex"
+            className="text-xs text-text-muted/50 transition-colors hover:text-text-primary"
+            aria-label="Admin login"
+          >
+            ·
+          </a>
         </div>
       </footer>
     </div>
