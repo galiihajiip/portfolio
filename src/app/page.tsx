@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { Navbar } from "@/components/layout/Navbar";
+import { HeroSection } from "@/components/sections/HeroSection";
 import { TechMarquee } from "@/components/sections/TechMarquee";
 import type {
   Award,
@@ -75,23 +76,7 @@ export default async function HomePage() {
     <div className="min-h-screen bg-surface">
       <Navbar cvUrl={profile?.cv_url ?? null} />
       <main>
-        <section className="relative flex min-h-screen items-center overflow-hidden pt-24">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--accent)/0.14),transparent_32rem)]" />
-          <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl space-y-6">
-              <span className="inline-flex rounded-full border border-border bg-surface-subtle px-3 py-1 text-sm font-medium text-text-secondary">
-                Available for work
-              </span>
-              <h1 className="font-display text-display-lg text-text-primary">
-                {profile?.full_name_en || "Full-Stack Developer Portfolio"}
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-text-secondary">
-                {profile?.tagline_en ||
-                  "A modern, CMS-powered portfolio for showcasing projects, experience, and credentials."}
-              </p>
-            </div>
-          </div>
-        </section>
+        <HeroSection profile={profile} />
 
         <TechMarquee items={techMarquee} />
 
