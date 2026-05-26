@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "about": "About",
+    "projects": "Projects",
+    "certifications": "Certifications",
+    "experience": "Experience",
+    "contact": "Contact",
+    "downloadCV": "Download CV",
+    "letsTalk": "Let's Talk"
+  },
+  "hero": {
+    "availableFor": "Available for work",
+    "scrollDown": "Scroll to explore"
+  },
+  "about": {
+    "sectionLabel": "About Me",
+    "sectionTitle": "Crafting digital experiences with purpose"
+  },
+  "projects": {
+    "sectionLabel": "Work",
+    "sectionTitle": "Selected Projects",
+    "viewDetails": "View Details",
+    "sourceCode": "Source Code",
+    "livePreview": "Live Preview",
+    "featured": "Featured",
+    "categories": {
+      "all": "All",
+      "web": "Web",
+      "mobile": "Mobile",
+      "backend": "Backend",
+      "ai": "AI / ML",
+      "other": "Other"
+    }
+  },
+  "experience": {
+    "sectionLabel": "Career",
+    "sectionTitle": "Work Experience",
+    "present": "Present",
+    "types": {
+      "full-time": "Full-time",
+      "part-time": "Part-time",
+      "freelance": "Freelance",
+      "contract": "Contract",
+      "internship": "Internship"
+    }
+  },
+  "certifications": {
+    "sectionLabel": "Credentials",
+    "sectionTitle": "Certifications & Awards",
+    "verify": "Verify Credential",
+    "noExpiry": "No Expiry",
+    "issued": "Issued",
+    "expires": "Expires"
+  },
+  "contact": {
+    "sectionLabel": "Get in Touch",
+    "sectionTitle": "Let's build something great",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "your@email.com",
+    "subjectPlaceholder": "What's this about?",
+    "messagePlaceholder": "Tell me about your project...",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "successTitle": "Message sent!",
+    "successMessage": "Thank you for reaching out. I'll get back to you within 24 hours.",
+    "errorMessage": "Something went wrong. Please try again."
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "rights": "All rights reserved"
+  },
+  "modal": {
+    "close": "Close",
+    "keyHighlights": "Key Highlights",
+    "metrics": "Impact & Metrics",
+    "architecture": "System Architecture"
+  }
+}

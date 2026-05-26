@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "about": "Tentang",
+    "projects": "Proyek",
+    "certifications": "Sertifikasi",
+    "experience": "Pengalaman",
+    "contact": "Kontak",
+    "downloadCV": "Unduh CV",
+    "letsTalk": "Hubungi Saya"
+  },
+  "hero": {
+    "availableFor": "Tersedia untuk bekerja",
+    "scrollDown": "Gulir untuk menjelajah"
+  },
+  "about": {
+    "sectionLabel": "Tentang Saya",
+    "sectionTitle": "Merancang pengalaman digital yang bermakna"
+  },
+  "projects": {
+    "sectionLabel": "Pekerjaan",
+    "sectionTitle": "Proyek Pilihan",
+    "viewDetails": "Lihat Detail",
+    "sourceCode": "Kode Sumber",
+    "livePreview": "Pratinjau Langsung",
+    "featured": "Unggulan",
+    "categories": {
+      "all": "Semua",
+      "web": "Web",
+      "mobile": "Mobile",
+      "backend": "Backend",
+      "ai": "AI / ML",
+      "other": "Lainnya"
+    }
+  },
+  "experience": {
+    "sectionLabel": "Karier",
+    "sectionTitle": "Pengalaman Kerja",
+    "present": "Sekarang",
+    "types": {
+      "full-time": "Penuh Waktu",
+      "part-time": "Paruh Waktu",
+      "freelance": "Lepas",
+      "contract": "Kontrak",
+      "internship": "Magang"
+    }
+  },
+  "certifications": {
+    "sectionLabel": "Kredensial",
+    "sectionTitle": "Sertifikasi & Penghargaan",
+    "verify": "Verifikasi Kredensial",
+    "noExpiry": "Tidak Kadaluarsa",
+    "issued": "Diterbitkan",
+    "expires": "Kadaluarsa"
+  },
+  "contact": {
+    "sectionLabel": "Hubungi",
+    "sectionTitle": "Mari buat sesuatu yang luar biasa",
+    "namePlaceholder": "Nama Anda",
+    "emailPlaceholder": "email@anda.com",
+    "subjectPlaceholder": "Ini tentang apa?",
+    "messagePlaceholder": "Ceritakan tentang proyek Anda...",
+    "send": "Kirim Pesan",
+    "sending": "Mengirim...",
+    "successTitle": "Pesan terkirim!",
+    "successMessage": "Terima kasih telah menghubungi. Saya akan membalas dalam 24 jam.",
+    "errorMessage": "Terjadi kesalahan. Silakan coba lagi."
+  },
+  "footer": {
+    "madeWith": "Dibuat dengan",
+    "rights": "Hak cipta dilindungi"
+  },
+  "modal": {
+    "close": "Tutup",
+    "keyHighlights": "Poin Utama",
+    "metrics": "Dampak & Metrik",
+    "architecture": "Arsitektur Sistem"
+  }
+}
