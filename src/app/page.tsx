@@ -104,6 +104,12 @@ async function getPortfolioData(): Promise<PortfolioData> {
 export default async function HomePage() {
   const { profile, projects, experience, certifications, awards, techMarquee } =
     await getPortfolioData();
+  const socialLinks = [
+    profile?.linkedin_url ? { label: "LinkedIn", href: profile.linkedin_url } : null,
+    profile?.github_url ? { label: "GitHub", href: profile.github_url } : null,
+    profile?.twitter_url ? { label: "Twitter", href: profile.twitter_url } : null,
+    profile?.email ? { label: "Email", href: `mailto:${profile.email}` } : null,
+  ].filter((link): link is { label: string; href: string } => Boolean(link));
 
   return (
     <div className="min-h-screen bg-surface">
@@ -137,19 +143,32 @@ export default async function HomePage() {
         </div>
       </main>
       <footer className="border-t border-border py-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 text-sm text-text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 text-sm text-text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <span>
             Copyright {new Date().getFullYear()} {profile?.full_name_en || "Portfolio"}. All
             rights reserved.
           </span>
-          <a
-            href="/admin/login"
-            rel="nofollow noindex"
-            className="text-xs text-text-muted/50 transition-colors hover:text-text-primary"
-            aria-label="Admin login"
-          >
-            ·
-          </a>
+          <div className="flex flex-wrap items-center gap-3">
+            {socialLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={link.href.startsWith("mailto:") ? undefined : "noreferrer"}
+                className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition-all duration-200 hover:border-border-strong hover:text-text-primary"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="/admin/login"
+              rel="nofollow noindex"
+              className="text-xs text-text-muted/50 transition-colors hover:text-text-primary"
+              aria-label="Admin login"
+            >
+              ·
+            </a>
+          </div>
         </div>
       </footer>
     </div>
