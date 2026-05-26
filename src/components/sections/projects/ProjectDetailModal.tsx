@@ -71,14 +71,15 @@ export function ProjectDetailModal({
             </Dialog.Overlay>
 
             <Dialog.Content asChild>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: 20 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="fixed inset-4 md:inset-8 lg:inset-12 xl:inset-y-8 xl:left-1/2 xl:right-auto xl:w-[min(calc(100vw-4rem),48rem)] xl:-translate-x-1/2 z-50 flex flex-col"
-              >
-                <div className="flex flex-col bg-surface-elevated border border-border rounded-2xl shadow-2xl overflow-hidden h-full">
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: 20 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col md:max-h-[calc(100vh-4rem)]"
+                >
+                  <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-2xl">
                   <div className="relative flex-shrink-0">
                     {project.thumbnail_url ? (
                       <div className="relative aspect-[21/9] overflow-hidden">
@@ -210,8 +211,9 @@ export function ProjectDetailModal({
                       </div>
                     )}
                   </div>
-                </div>
-              </motion.div>
+                  </div>
+                </motion.div>
+              </div>
             </Dialog.Content>
           </Dialog.Portal>
         )}

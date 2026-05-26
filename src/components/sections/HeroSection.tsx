@@ -209,19 +209,19 @@ export function HeroSection({ profile }: HeroSectionProps) {
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-muted"
+        className="mt-10 flex items-center gap-2 rounded-full border border-border bg-surface-elevated/85 px-4 py-2 text-text-secondary shadow-glass backdrop-blur"
       >
-        <span className="text-xs font-medium tracking-widest uppercase">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.22em]">
           {t.hero.scrollDown}
         </span>
         <motion.div
-          animate={{ y: [0, 6, 0] }}
+          animate={{ y: [0, 4, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <ArrowDown size={16} />
+          <ArrowDown size={15} />
         </motion.div>
       </motion.div>
     </section>

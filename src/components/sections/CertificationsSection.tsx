@@ -121,81 +121,83 @@ function CredentialDialog({ item }: { item: CredentialItem }) {
           />
         </Dialog.Overlay>
         <Dialog.Content asChild>
-          <motion.div
-            initial={{ opacity: 0, y: 28, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 28, scale: 0.96 }}
-            transition={{ duration: 0.25, ease: smoothEase }}
-            className="fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-border bg-surface p-4 shadow-card-hover sm:p-6"
-          >
-            <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr]">
-              <CredentialPreview item={item} title={title} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 28, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 28, scale: 0.96 }}
+              transition={{ duration: 0.25, ease: smoothEase }}
+              className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-border bg-surface p-4 shadow-card-hover sm:p-6"
+            >
+              <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr]">
+                <CredentialPreview item={item} title={title} />
 
-              <div>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <Dialog.Title className="font-display text-2xl text-text-primary">
-                      {title}
-                    </Dialog.Title>
-                    {item.issuer && (
-                      <Dialog.Description className="mt-2 text-sm text-text-secondary">
-                        {item.issuer}
-                      </Dialog.Description>
+                <div>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <Dialog.Title className="font-display text-2xl text-text-primary">
+                        {title}
+                      </Dialog.Title>
+                      {item.issuer && (
+                        <Dialog.Description className="mt-2 text-sm text-text-secondary">
+                          {item.issuer}
+                        </Dialog.Description>
+                      )}
+                    </div>
+                    <Dialog.Close className="rounded-full border border-border p-2 text-text-muted transition-colors hover:border-border-strong hover:text-text-primary">
+                      <X size={18} />
+                      <span className="sr-only">Close</span>
+                    </Dialog.Close>
+                  </div>
+
+                  <div className="mt-6 grid gap-3 text-sm text-text-secondary">
+                    {date && (
+                      <div className="rounded-2xl bg-surface-subtle p-4">
+                        <span className="block text-xs uppercase tracking-[0.18em] text-text-muted">
+                          {item.type === "certification" ? "Issued" : "Awarded"}
+                        </span>
+                        <span className="mt-1 block text-text-primary">{date}</span>
+                      </div>
+                    )}
+                    {expiryDate && (
+                      <div className="rounded-2xl bg-surface-subtle p-4">
+                        <span className="block text-xs uppercase tracking-[0.18em] text-text-muted">
+                          Expires
+                        </span>
+                        <span className="mt-1 block text-text-primary">{expiryDate}</span>
+                      </div>
+                    )}
+                    {item.credentialId && (
+                      <div className="rounded-2xl bg-surface-subtle p-4">
+                        <span className="block text-xs uppercase tracking-[0.18em] text-text-muted">
+                          Credential ID
+                        </span>
+                        <span className="mt-1 block break-all text-text-primary">
+                          {item.credentialId}
+                        </span>
+                      </div>
                     )}
                   </div>
-                  <Dialog.Close className="rounded-full border border-border p-2 text-text-muted transition-colors hover:border-border-strong hover:text-text-primary">
-                    <X size={18} />
-                    <span className="sr-only">Close</span>
-                  </Dialog.Close>
-                </div>
 
-                <div className="mt-6 grid gap-3 text-sm text-text-secondary">
-                  {date && (
-                    <div className="rounded-2xl bg-surface-subtle p-4">
-                      <span className="block text-xs uppercase tracking-[0.18em] text-text-muted">
-                        {item.type === "certification" ? "Issued" : "Awarded"}
-                      </span>
-                      <span className="mt-1 block text-text-primary">{date}</span>
-                    </div>
+                  {description && (
+                    <p className="mt-6 leading-relaxed text-text-secondary">{description}</p>
                   )}
-                  {expiryDate && (
-                    <div className="rounded-2xl bg-surface-subtle p-4">
-                      <span className="block text-xs uppercase tracking-[0.18em] text-text-muted">
-                        Expires
-                      </span>
-                      <span className="mt-1 block text-text-primary">{expiryDate}</span>
-                    </div>
-                  )}
-                  {item.credentialId && (
-                    <div className="rounded-2xl bg-surface-subtle p-4">
-                      <span className="block text-xs uppercase tracking-[0.18em] text-text-muted">
-                        Credential ID
-                      </span>
-                      <span className="mt-1 block break-all text-text-primary">
-                        {item.credentialId}
-                      </span>
-                    </div>
+
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-transform hover:-translate-y-0.5"
+                    >
+                      {lang === "id" ? "Buka credential" : "Open credential"}
+                      <ExternalLink size={15} />
+                    </a>
                   )}
                 </div>
-
-                {description && (
-                  <p className="mt-6 leading-relaxed text-text-secondary">{description}</p>
-                )}
-
-                {item.url && (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-transform hover:-translate-y-0.5"
-                  >
-                    {lang === "id" ? "Buka credential" : "Open credential"}
-                    <ExternalLink size={15} />
-                  </a>
-                )}
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
