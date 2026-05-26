@@ -4,6 +4,8 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { TechMarquee } from "@/components/sections/TechMarquee";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { ProjectsSection } from "@/components/sections/projects/ProjectsSection";
+import { ExperienceSection } from "@/components/sections/ExperienceSection";
+import { CertificationsSection } from "@/components/sections/CertificationsSection";
 import type { Metadata } from "next";
 import type {
   Award,
@@ -127,64 +129,9 @@ export default async function HomePage() {
 
           <ProjectsSection projects={projects} />
 
-          <section id="experience" className="py-24">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-accent">
-              Career
-            </p>
-            <h2 className="font-display text-display-md text-text-primary">Work Experience</h2>
-            <div className="mt-8 space-y-4">
-              {experience.length > 0 ? (
-                experience.map((item) => (
-                  <article key={item.id} className="rounded-2xl border border-border p-5">
-                    <h3 className="font-display text-xl text-text-primary">{item.role_en}</h3>
-                    <p className="text-text-secondary">{item.company_name}</p>
-                  </article>
-                ))
-              ) : (
-                <p className="text-text-secondary">
-                  Experience entries will appear here after the CMS is populated.
-                </p>
-              )}
-            </div>
-          </section>
+          <ExperienceSection experiences={experience} />
 
-          <section id="certifications" className="py-24">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-accent">
-              Credentials
-            </p>
-            <h2 className="font-display text-display-md text-text-primary">
-              Certifications & Awards
-            </h2>
-            <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {[...certifications, ...awards].length > 0 ? (
-                <>
-                  {certifications.map((certification) => (
-                    <article
-                      key={certification.id}
-                      className="rounded-2xl border border-border p-5"
-                    >
-                      <h3 className="font-display text-lg text-text-primary">
-                        {certification.title_en}
-                      </h3>
-                      <p className="text-sm text-text-secondary">{certification.issuer}</p>
-                    </article>
-                  ))}
-                  {awards.map((award) => (
-                    <article key={award.id} className="rounded-2xl border border-border p-5">
-                      <h3 className="font-display text-lg text-text-primary">
-                        {award.title_en}
-                      </h3>
-                      <p className="text-sm text-text-secondary">{award.issuer_en}</p>
-                    </article>
-                  ))}
-                </>
-              ) : (
-                <p className="text-text-secondary">
-                  Certifications and awards will appear here after the CMS is populated.
-                </p>
-              )}
-            </div>
-          </section>
+          <CertificationsSection certifications={certifications} awards={awards} />
 
           <ContactSection />
         </div>
