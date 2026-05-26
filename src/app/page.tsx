@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TechMarquee } from "@/components/sections/TechMarquee";
+import { ProjectsSection } from "@/components/sections/projects/ProjectsSection";
 import type {
   Award,
   Certification,
@@ -94,36 +95,7 @@ export default async function HomePage() {
             </p>
           </section>
 
-          <section id="projects" className="py-24">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-accent">
-              Work
-            </p>
-            <h2 className="font-display text-display-md text-text-primary">Selected Projects</h2>
-            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {projects.length > 0 ? (
-                projects.map((project) => (
-                  <article
-                    key={project.id}
-                    className="rounded-2xl border border-border bg-surface-elevated p-5"
-                  >
-                    <span className="text-xs font-medium uppercase tracking-wider text-text-muted">
-                      {project.category}
-                    </span>
-                    <h3 className="mt-3 font-display text-xl text-text-primary">
-                      {project.title_en}
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-text-secondary">
-                      {project.short_description_en}
-                    </p>
-                  </article>
-                ))
-              ) : (
-                <p className="text-text-secondary">
-                  Project entries will appear here after the CMS is populated.
-                </p>
-              )}
-            </div>
-          </section>
+          <ProjectsSection projects={projects} />
 
           <section id="experience" className="py-24">
             <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-accent">
