@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, Upload, ImageIcon, Trash2 } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -21,7 +21,7 @@ const schema = z.object({
   start_date: z.string().min(1, "Required"),
   end_date: z.string(),
   is_current: z.boolean(),
-  company_logo_url: z.string().url("Invalid URL").or(z.literal("")),
+  company_logo_url: z.string().optional(),
   company_url: z.string().url("Invalid URL").or(z.literal("")),
   location_en: z.string(),
   location_id: z.string(),
@@ -60,10 +60,15 @@ interface ExperienceFormModalProps {
   onClose: () => void;
 }
 
-const nullable = (value: string) => value.trim() || null;
+const nullable = (value: string | undefined) => (value?.trim() ? value.trim() : null);
 
 export function ExperienceFormModal({ experience, isOpen, onClose }: ExperienceFormModalProps) {
   const isEditing = Boolean(experience);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     register,
     control,
@@ -96,13 +101,90 @@ export function ExperienceFormModal({ experience, isOpen, onClose }: ExperienceF
         employment_type: experience.employment_type,
         display_order: experience.display_order,
       });
+      setLogoPreview(experience.company_logo_url ?? null);
     } else {
       reset(emptyValues);
+      setLogoPreview(null);
     }
+    setLogoFile(null);
   }, [experience, reset]);
+
+  const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be less than 2MB");
+      return;
+    }
+
+    setLogoFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setLogoPreview(objectUrl);
+  };
+
+  const removeLogo = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    setValue("company_logo_url", "");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const uploadLogo = async (file: File): Promise<string | null> => {
+    const supabase = createClient();
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "-");
+    const filePath = `company-logos/${file.lastModified}-${safeName}`;
+
+    const { error } = await supabase.storage
+      .from("portfolio-assets")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+
+    if (error) {
+      console.error("Upload error:", error);
+      return null;
+    }
+
+    const { data } = supabase.storage
+      .from("portfolio-assets")
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
 
   const onSubmit = async (data: FormData) => {
     const supabase = createClient();
+    let logoUrl = data.company_logo_url || null;
+
+    // Upload new logo if selected
+    if (logoFile) {
+      setIsUploadingLogo(true);
+      const uploadedUrl = await uploadLogo(logoFile);
+      setIsUploadingLogo(false);
+
+      if (!uploadedUrl) {
+        toast.error("Failed to upload logo");
+        return;
+      }
+      logoUrl = uploadedUrl;
+    }
+
+    // If logo was removed (no file and no preview), set to null
+    if (!logoFile && !logoPreview) {
+      logoUrl = null;
+    }
+
     const payload: ExperienceInsert = {
       company_name: data.company_name,
       role_en: data.role_en,
@@ -112,7 +194,7 @@ export function ExperienceFormModal({ experience, isOpen, onClose }: ExperienceF
       start_date: data.start_date,
       end_date: data.is_current ? null : nullable(data.end_date),
       is_current: data.is_current,
-      company_logo_url: nullable(data.company_logo_url),
+      company_logo_url: logoUrl,
       company_url: nullable(data.company_url),
       location_en: nullable(data.location_en),
       location_id: nullable(data.location_id),
@@ -157,6 +239,58 @@ export function ExperienceFormModal({ experience, isOpen, onClose }: ExperienceF
                 <div className="flex-1 overflow-y-auto p-6">
                   <form id="experience-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
                     <Field label="Company" error={errors.company_name?.message}><input {...register("company_name")} className={cn(inputClasses, errors.company_name && "border-red-400")} /></Field>
+
+                    {/* Company Logo Upload */}
+                    <div>
+                      <label className={labelClasses}>Company Logo</label>
+                      <div className="flex items-start gap-4">
+                        {logoPreview ? (
+                          <div className="relative group">
+                            <div className="h-16 w-16 rounded-lg border border-border bg-surface-subtle flex items-center justify-center overflow-hidden">
+                              <img
+                                src={logoPreview}
+                                alt="Company logo preview"
+                                className="h-full w-full object-contain p-1"
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={removeLogo}
+                              className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                              aria-label="Remove logo"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="h-16 w-16 rounded-lg border border-dashed border-border bg-surface-subtle flex items-center justify-center">
+                            <ImageIcon size={20} className="text-text-muted" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoSelect}
+                            className="hidden"
+                            id="logo-upload"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:border-border-strong transition-colors"
+                          >
+                            <Upload size={14} />
+                            {logoPreview ? "Change Logo" : "Upload Logo"}
+                          </button>
+                          <p className="mt-1.5 text-xs text-text-muted">
+                            PNG, JPG, SVG or WebP. Max 2MB.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <Field label="Role (EN)" error={errors.role_en?.message}><input {...register("role_en")} className={cn(inputClasses, errors.role_en && "border-red-400")} /></Field>
                       <Field label="Role (ID)" error={errors.role_id?.message}><input {...register("role_id")} className={cn(inputClasses, errors.role_id && "border-red-400")} /></Field>
@@ -164,7 +298,6 @@ export function ExperienceFormModal({ experience, isOpen, onClose }: ExperienceF
                       <Field label="Description (ID)"><textarea {...register("description_id")} rows={4} className={cn(inputClasses, "resize-none")} /></Field>
                       <Field label="Start Date" error={errors.start_date?.message}><input {...register("start_date")} type="date" className={cn(inputClasses, errors.start_date && "border-red-400")} /></Field>
                       <Field label="End Date"><input {...register("end_date")} type="date" disabled={isCurrent} className={cn(inputClasses, isCurrent && "opacity-60")} /></Field>
-                      <Field label="Company Logo URL" error={errors.company_logo_url?.message}><input {...register("company_logo_url")} className={cn(inputClasses, errors.company_logo_url && "border-red-400")} /></Field>
                       <Field label="Company URL" error={errors.company_url?.message}><input {...register("company_url")} className={cn(inputClasses, errors.company_url && "border-red-400")} /></Field>
                       <Field label="Location (EN)"><input {...register("location_en")} className={inputClasses} /></Field>
                       <Field label="Location (ID)"><input {...register("location_id")} className={inputClasses} /></Field>
@@ -183,9 +316,9 @@ export function ExperienceFormModal({ experience, isOpen, onClose }: ExperienceF
                 </div>
                 <div className="flex justify-end gap-3 border-t border-border px-6 py-4">
                   <Dialog.Close className="rounded-lg border border-border px-4 py-2 text-sm text-text-secondary hover:text-text-primary">Cancel</Dialog.Close>
-                  <button type="submit" form="experience-form" disabled={isSubmitting} className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm text-accent-foreground hover:bg-accent/90 disabled:opacity-60">
-                    {isSubmitting && <Loader2 size={14} className="animate-spin" />}
-                    {isEditing ? "Save Changes" : "Create Experience"}
+                  <button type="submit" form="experience-form" disabled={isSubmitting || isUploadingLogo} className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm text-accent-foreground hover:bg-accent/90 disabled:opacity-60">
+                    {(isSubmitting || isUploadingLogo) && <Loader2 size={14} className="animate-spin" />}
+                    {isUploadingLogo ? "Uploading..." : isEditing ? "Save Changes" : "Create Experience"}
                   </button>
                 </div>
               </motion.div>
