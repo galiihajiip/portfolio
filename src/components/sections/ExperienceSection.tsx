@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BriefcaseBusiness, CalendarDays, ExternalLink, MapPin } from "lucide-react";
+import { CalendarDays, ExternalLink, MapPin, FileImage } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/lib/utils";
@@ -20,13 +20,6 @@ const employmentTypeLabels: Record<Experience["employment_type"], { en: string; 
   contract: { en: "Contract", id: "Kontrak" },
   internship: { en: "Internship", id: "Magang" },
 };
-
-function formatYear(value: string | null) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.getFullYear().toString();
-}
 
 function formatMonthYear(value: string | null, locale: string) {
   if (!value) return null;
@@ -57,118 +50,126 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
       <div className="mt-12">
         {experiences.length > 0 ? (
           <div className="relative">
-            <div className="absolute bottom-8 left-4 top-8 w-px bg-gradient-to-b from-accent via-border-strong to-transparent md:left-1/2" />
+            {/* Timeline line */}
+            <div className="absolute bottom-0 left-6 top-0 w-px bg-gradient-to-b from-accent/60 via-border to-transparent md:left-8" />
 
-            <div className="space-y-10">
+            <div className="space-y-6">
               {experiences.map((item, index) => {
                 const role = lang === "id" ? item.role_id : item.role_en;
                 const description = lang === "id" ? item.description_id : item.description_en;
                 const location = lang === "id" ? item.location_id : item.location_en;
-                const startYear = formatYear(item.start_date);
-                const endYear = item.is_current ? "Present" : formatYear(item.end_date);
                 const startDate = formatMonthYear(item.start_date, locale);
                 const endDate = item.is_current
                   ? lang === "id"
                     ? "Sekarang"
                     : "Present"
                   : formatMonthYear(item.end_date, locale);
-                const period = [startDate, endDate].filter(Boolean).join(" - ");
-                const yearRange = [startYear, endYear].filter(Boolean).join(" - ");
+                const period = [startDate, endDate].filter(Boolean).join(" — ");
 
                 return (
                   <motion.article
                     key={item.id}
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.5, delay: index * 0.08, ease: smoothEase }}
-                    className={cn(
-                      "relative grid gap-5 pl-12 md:grid-cols-[1fr_auto_1fr] md:gap-8 md:pl-0",
-                      index % 2 === 1 && "md:[&>div:first-child]:order-3",
-                    )}
+                    initial={{ opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.45, delay: index * 0.06, ease: smoothEase }}
+                    className="relative pl-16 md:pl-20"
                   >
-                    <div
-                      className={cn(
-                        "hidden md:flex",
-                        index % 2 === 0 ? "justify-end text-right" : "justify-start text-left",
+                    {/* Timeline dot / logo */}
+                    <div className="absolute left-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface shadow-sm md:left-5 md:h-7 md:w-7">
+                      {item.company_logo_url ? (
+                        <img
+                          src={item.company_logo_url}
+                          alt={item.company_name}
+                          className="h-5 w-5 rounded-full object-contain"
+                        />
+                      ) : (
+                        <div className="h-2.5 w-2.5 rounded-full bg-accent" />
                       )}
-                    >
-                      <div>
-                        <p className="font-display text-3xl text-accent">{yearRange}</p>
-                        <p className="mt-2 text-sm uppercase tracking-[0.2em] text-text-muted">
-                          {item.is_current
-                            ? lang === "id"
-                              ? "Saat ini"
-                              : "Current"
-                            : lang === "id"
-                              ? "Selesai"
-                              : "Completed"}
-                        </p>
-                      </div>
                     </div>
 
-                    <div className="absolute left-0 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent shadow-glass md:static">
-                      <BriefcaseBusiness size={17} />
-                    </div>
+                    <div className="rounded-2xl border border-border bg-surface-elevated p-5 transition-all duration-300 hover:border-border-strong hover:shadow-card-hover">
+                      {/* Header row: role + badge */}
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-display text-lg text-text-primary leading-tight">
+                            {role}
+                          </h3>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary">
+                            {item.company_url ? (
+                              <a
+                                href={item.company_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 font-medium text-text-primary transition-colors hover:text-accent"
+                              >
+                                {item.company_name}
+                                <ExternalLink size={12} />
+                              </a>
+                            ) : (
+                              <span className="font-medium text-text-primary">
+                                {item.company_name}
+                              </span>
+                            )}
+                            <span className="text-text-muted">·</span>
+                            <span className="text-text-muted">
+                              {employmentTypeLabels[item.employment_type][lang]}
+                            </span>
+                          </div>
+                        </div>
 
-                    <div className="rounded-3xl border border-border bg-surface-elevated p-6 shadow-glass transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:shadow-card-hover">
-                      <div className="mb-5 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-accent-subtle px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-                          {employmentTypeLabels[item.employment_type][lang]}
-                        </span>
-                        <span
-                          className={cn(
-                            "rounded-full px-3 py-1 text-xs font-semibold",
-                            item.is_current
-                              ? "bg-green-500/10 text-green-600 dark:text-green-400"
-                              : "bg-surface-subtle text-text-muted",
-                          )}
-                        >
-                          {item.is_current
-                            ? lang === "id"
-                              ? "Aktif"
-                              : "Active"
-                            : lang === "id"
-                              ? "Selesai"
-                              : "Completed"}
-                        </span>
-                      </div>
-
-                      <div className="mb-5 md:hidden">
-                        <p className="font-display text-2xl text-accent">{yearRange}</p>
-                      </div>
-
-                      <h3 className="font-display text-2xl text-text-primary">{role}</h3>
-                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-text-secondary">
-                        {item.company_url ? (
-                          <a
-                            href={item.company_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 font-medium text-text-primary transition-colors hover:text-accent"
-                          >
-                            {item.company_name}
-                            <ExternalLink size={13} />
-                          </a>
-                        ) : (
-                          <span className="font-medium text-text-primary">{item.company_name}</span>
+                        {item.is_current && (
+                          <span className="shrink-0 rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-medium text-green-600 dark:text-green-400">
+                            {lang === "id" ? "Aktif" : "Active"}
+                          </span>
                         )}
+                      </div>
+
+                      {/* Meta row */}
+                      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-text-muted">
                         {period && (
                           <span className="inline-flex items-center gap-1">
-                            <CalendarDays size={14} />
+                            <CalendarDays size={12} />
                             {period}
                           </span>
                         )}
                         {location && (
                           <span className="inline-flex items-center gap-1">
-                            <MapPin size={14} />
+                            <MapPin size={12} />
                             {location}
                           </span>
                         )}
                       </div>
 
+                      {/* Description */}
                       {description && (
-                        <p className="mt-5 leading-relaxed text-text-secondary">{description}</p>
+                        <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+                          {description}
+                        </p>
+                      )}
+
+                      {/* Media gallery */}
+                      {item.media_urls && item.media_urls.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {item.media_urls.map((url, i) => (
+                            <a
+                              key={i}
+                              href={url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="group relative h-16 w-16 overflow-hidden rounded-lg border border-border bg-surface-subtle transition-all hover:border-accent hover:shadow-sm"
+                            >
+                              <img
+                                src={url}
+                                alt={`${item.company_name} media ${i + 1}`}
+                                className="h-full w-full object-cover"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all group-hover:bg-black/30">
+                                <FileImage size={14} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            </a>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </motion.article>

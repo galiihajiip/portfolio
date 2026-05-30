@@ -118,6 +118,7 @@ export interface Experience {
   location_en: string | null;
   location_id: string | null;
   employment_type: "full-time" | "part-time" | "freelance" | "contract" | "internship";
+  media_urls: string[];
   display_order: number;
   created_at: string;
 }
