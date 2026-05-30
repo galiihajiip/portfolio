@@ -72,7 +72,7 @@ async function uploadFile(file: File, folder: string): Promise<string | null> {
     .upload(filePath, file, { cacheControl: "3600", upsert: true });
 
   if (error) {
-    console.error("Upload error:", error);
+    console.error("Upload error:", error.message, error);
     return null;
   }
 
@@ -234,6 +234,24 @@ export function ExperienceFormModal({ experience, isOpen, onClose }: ExperienceF
         : await supabase.from("experience").insert(payload);
 
     if (error) {
+      console.error("Supabase error:", error);
+      // If media_urls column doesn't exist yet, retry without it
+      if (error.message?.includes("media_urls") || error.code === "PGRST204") {
+        const { media_urls, ...payloadWithoutMedia } = payload;
+        const { error: retryError } =
+          isEditing && experience
+            ? await supabase.from("experience").update(payloadWithoutMedia as ExperienceUpdate).eq("id", experience.id)
+            : await supabase.from("experience").insert(payloadWithoutMedia as ExperienceInsert);
+
+        if (retryError) {
+          console.error("Retry error:", retryError);
+          toast.error(isEditing ? "Failed to update experience" : "Failed to create experience");
+          return;
+        }
+        toast.success((isEditing ? "Experience updated" : "Experience created") + " (media not saved - run migration)");
+        onClose();
+        return;
+      }
       toast.error(isEditing ? "Failed to update experience" : "Failed to create experience");
       return;
     }
